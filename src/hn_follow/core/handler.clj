@@ -2,6 +2,7 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [cheshire.core :refer :all]
+            [clojure.java.io :as io]
             [hn-follow.core.api :as api]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
 
@@ -13,7 +14,7 @@
       :body (generate-string resp)}))
 
 (defroutes app-routes
-  (GET "/" [] "Hello World")
+  (GET "/" [] (slurp "resources/public/follow.html"))
 
   (GET "/i/:user" [user]
        (json {:interactions
