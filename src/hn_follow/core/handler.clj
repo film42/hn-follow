@@ -34,6 +34,9 @@
   (GET "/i/:user" [user]
        (json {:interactions
               (-> user api/get-user (api/interaction-tree 5))}))
+
+  (GET "/f" []
+       (json (account/all)))
   
   (route/not-found "Not Found"))
 

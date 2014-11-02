@@ -36,3 +36,7 @@
    :else (if (save request)
            (success "Successfully saved!")
            (error "Could not save"))))
+
+(defn all []
+  {:users
+   (redis* (car/keys :*))})
