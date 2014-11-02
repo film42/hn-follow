@@ -63,3 +63,17 @@ pre:hover {overflow:auto}
   /* IE8 and below */
   filter: progid:DXImageTransform.Microsoft.Matrix(M11=-1, M12=0, M21=0, M22=-1, DX=0, DY=0, SizingMethod='auto expand');
 }
+
+/* FOLLOW */
+.page { width: 100%; }
+.heading { padding: 5px; color: #000000; background: #ff6600; text-align: center; }
+.heading p { margin: 0; }
+.center { background-color: rgb(246, 246, 239); margin: 0 auto; width: 90%; }
+.form {padding: 5px; display: none; }
+.comments { padding: 5px; }
+.item, .comment { color: #000000; }
+
+@media (max-width: 700px) {
+  body, html, ol, li { padding: 0; margin: 0; width: 100%; }
+  .center { width: 100%; }
+}

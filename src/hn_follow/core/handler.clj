@@ -4,7 +4,14 @@
             [cheshire.core :refer :all]
             [clojure.java.io :as io]
             [hn-follow.core.api :as api]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [hn-follow.core.account :as account]
+            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]))
+
+(def hn-defaults
+  (assoc api-defaults :static {:resources "public"}
+                                     :cookies   true
+                                     :session   {:flash true
+                                                 :cookie-attrs {:http-only true}}))
 
 (defn json
   ([resp] (json resp 200) )
@@ -14,7 +21,16 @@
       :body (generate-string resp)}))
 
 (defroutes app-routes
-  (GET "/" [] (slurp "resources/public/follow.html"))
+  (GET "/" []
+       (slurp "resources/public/follow.html"))
+
+  (GET "/a/:username" [username]
+       (println username)
+       (json (account/following username)))
+
+  (POST "/u" {body :body}
+        (let [request (parse-string (slurp body) true)]
+          (json (account/update request))))
 
   (GET "/i/:user" [user]
        (json {:interactions
@@ -23,4 +39,4 @@
   (route/not-found "Not Found"))
 
 (def app
-  (wrap-defaults app-routes site-defaults))
+  (wrap-defaults app-routes hn-defaults))

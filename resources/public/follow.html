@@ -7,116 +7,42 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <script type="text/javascript" src="/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="/moment.min.js"></script>
-
-    <script type="text/javascript">
-
-    function comment_template(comment, story) {
-      var template = '<li><p class="comhead">'
-      template += '<a href="https://news.ycombinator.com/user?id='+comment.by+'">'+comment.by+'</a>'
-      template += ' ' + moment(comment.time * 1000).fromNow() + ' ';
-      template += '| <a href="https://news.ycombinator.com/item?id='+ comment.id +'">Link</a> ';
-      template += '| <a href="https://news.ycombinator.com/item?id='+ story.id +'">Root</a> ';
-
-      template += "| <u><a href='" + story.url + "'>" + story.title + "</a></u>"
-      template += '<div class="comment">'+comment.text+'</p>'
-
-      return template + '</li>'
-    }
-
-    function sort_clean_data(data) {
-      var all_comments = [];
-
-      // Flat map
-      data.forEach(function(innteractions_list) {
-        innteractions_list.forEach(function(pair) {
-          all_comments.push(pair);
-        });
-      });
-
-      // Sort
-      all_comments.sort(function(a, b) {
-        if( a[0].time > b[0].time ) return -1;
-        else return 1;
-      });
-
-      return all_comments;
-    }
-
-    function prune_tree(data) {
-      var tree = data.tree;
-
-      tree.sort(function(a, b) {
-        if( a.id > b.id ) return -1;
-        else return 1;
-      });
-
-      var post = tree.filter(function(item) { return item.type == "story" })[0];
-      var comment = tree[0];
-
-      return [comment, post];
-    }
-
-    function data_for_usernames(names) {
-      return names.map(function(name) {
-        return $.getJSON("/i/" + name);
-      });
-    }
-
-    $(document).ready(function() {
-
-      var usernames = ["film42", "austenallred", "xwowsersx", "qzcx" ];
-      var p_array = data_for_usernames(usernames);
-
-
-      $.when.apply($, p_array).done(function() {
-
-        var args = Array.prototype.slice.call(arguments);
-        var data = args.map(function(o) { return o[0]; });
-
-        var clean_data = data.map(function(da) {
-          return da.interactions.map(prune_tree);
-        });
-
-        var all_interactions = sort_clean_data(clean_data);
-
-        // Each interaction pair
-        all_interactions.forEach(function(pair) {
-          var comment = pair[0];
-          var post = pair[1];
-
-          if( comment.deleted ) return;
-
-          $('.comment-list').append( comment_template( comment, post ) );
-        });
-      });
-    });
-    </script>
+    <script type="text/javascript" src="/follow.js"></script>
 
     <title>HN Follow</title>
-
-    <style type="text/css">
-      .page { width: 100%; }
-      .heading { text-align: center; }
-      .center { background-color: rgb(246, 246, 239); padding: 5px; margin: 0 auto; width: 90%; }
-      .comment { color: #000000; }
-
-      @media (max-width: 700px) {
-        body, html, ol, li { padding: 0; margin: 0; width: 100%; }
-        .center { width: 100%; }
-      }
-    </style>
   </head>
 
   <body>
     <div class="page">
       <div class="center">
         <!-- Heading -->
-        <div class="heading">
-          <p>Interactions for: film42, austenallred, xwowsersx, qzcx</p>
-        </div>
+        <div class="heading"></div>
         <!-- Comments -->
         <div class="comments">
-          <ol class="comment-list"></ol>
+          <ol class="comment-list">
+            Loading...
+          </ol>
+        </div>
+        <!-- Form -->
+        <div class="form">
+          <p>Register your username and the people you want to follow.</p>
+          <form>
+            <p>Username: <input type="text" name="user"></p>
+            <p>Follow up to 10 HN users:</p>
+            <ol>
+              <li><input type="text" name="follow1"><br></li>
+              <li><input type="text" name="follow2"><br></li>
+              <li><input type="text" name="follow3"><br></li>
+              <li><input type="text" name="follow4"><br></li>
+              <li><input type="text" name="follow5"><br></li>
+              <li><input type="text" name="follow6"><br></li>
+              <li><input type="text" name="follow7"><br></li>
+              <li><input type="text" name="follow8"><br></li>
+              <li><input type="text" name="follow9"><br></li>
+              <li><input type="text" name="follow10"><br></li>
+            </ol>
+            <input type="submit" value="Add/ Update">
+          </form>
         </div>
       </div>
     </div>
