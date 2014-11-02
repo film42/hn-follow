@@ -25,7 +25,6 @@
        (slurp "resources/public/follow.html"))
 
   (GET "/a/:username" [username]
-       (println username)
        (json (account/following username)))
 
   (POST "/u" {body :body}
