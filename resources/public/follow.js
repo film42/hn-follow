@@ -58,7 +58,7 @@ function prune_tree(data) {
 
 function promise_for_usernames(names) {
   return names.map(function(name) {
-    return $.getJSON("/i/" + name);
+    return $.getJSON("/api/i/" + name);
   });
 }
 
@@ -93,7 +93,7 @@ function register_form(username) {
     var request = { username: username, follow: follow };
 
     $.ajax({
-      url: "/u",
+      url: "/api/u",
       method: "post",
       headers: {
         "Content-Type": "application/json"
@@ -156,7 +156,7 @@ $(document).ready(function() {
     $('.comment-list').html('HN Follow');
   }
 
-  $.getJSON("/a/" + username, function(model) {
+  $.getJSON("/api/a/" + username, function(model) {
     if(model.follow.length === 0) {
       $('.comments').hide();
       if(username === undefined) {

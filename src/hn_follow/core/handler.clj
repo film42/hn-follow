@@ -9,9 +9,9 @@
 
 (def hn-defaults
   (assoc api-defaults :static {:resources "public"}
-                                     :cookies   true
-                                     :session   {:flash true
-                                                 :cookie-attrs {:http-only true}}))
+                      :cookies   true
+                      :session   {:flash true
+                                  :cookie-attrs {:http-only true}}))
 
 (defn json
   ([resp] (json resp 200) )
@@ -24,20 +24,21 @@
   (GET "/" []
        (slurp "resources/public/follow.html"))
 
-  (GET "/a/:username" [username]
-       (json (account/following username)))
+  (context "/api" []
+           (GET "/i/:user" [user]
+                (json {:interactions
+                       (-> user api/get-user (api/interaction-tree 5))}))
+           
+           (POST "/u" {body :body}
+                 (let [request (parse-string (slurp body) true)]
+                   (json (account/update request))))
 
-  (POST "/u" {body :body}
-        (let [request (parse-string (slurp body) true)]
-          (json (account/update request))))
+           (GET "/f" []
+                (json (account/all)))
 
-  (GET "/i/:user" [user]
-       (json {:interactions
-              (-> user api/get-user (api/interaction-tree 5))}))
+           (GET "/a/:username" [username]
+                (json (account/following username))))
 
-  (GET "/f" []
-       (json (account/all)))
-  
   (route/not-found "Not Found"))
 
 (def app
