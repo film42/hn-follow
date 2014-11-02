@@ -1,9 +1,10 @@
 function heading_template(user_model) {
-  var template = "<p><b>"+user_model.username+"</b> is following: ";
+  var template = "<p class='home-link'><a href='/'>Home</a></p>";
+  template += "<p><b>"+user_model.username+"</b> is following: ";
   user_model.follow.forEach(function(name) {
     template += name + ", ";
   });
-  return template + "</p>";
+  return template + "</center></p>";
 }
 
 function item_template(item, story) {
@@ -74,16 +75,16 @@ function get_param(variable) {
 
 function register_form(username) {
   $('.form').show();
-  $('.form input[name~=user]').val(username);
-  $('.form form').on('submit', function(e) {
+  $('.form .register input[name~=user]').val(username);
+  $('.form .register').on('submit', function(e) {
     e.preventDefault();
 
-    username = $('.form input[name~=user]').val();
+    username = $('.form .register input[name~=user]').val();
     var follow = [];
 
     // Collect Users from form
     for(var i=1; i <= 10; ++i) {
-      var a_user = $('.form input[name~=follow'+i+']').val();
+      var a_user = $('.form .register input[name~=follow'+i+']').val();
       if(a_user != '') {
         follow.push(a_user);
       }
@@ -152,13 +153,17 @@ $(document).ready(function() {
   var username = get_param("user");
 
   if(username === undefined) {
-    $('.comment-list').html('No user specified');
+    $('.comment-list').html('HN Follow');
   }
 
   $.getJSON("/a/" + username, function(model) {
     if(model.follow.length === 0) {
       $('.comments').hide();
-      $('.heading').html('<p>No such user</p>');
+      if(username === undefined) {
+        $('.heading').html('<p>HN Follow</p>');
+      } else {
+        $('.heading').html('<p>No such user</p>');
+      }
       register_form(username);
       return;
     }

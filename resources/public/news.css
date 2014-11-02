@@ -72,6 +72,9 @@ pre:hover {overflow:auto}
 .form {padding: 5px; display: none; }
 .comments { padding: 5px; }
 .item, .comment { color: #000000; }
+.home-link { float: left; }
+.home-link a {color: #000; }
+.home-link a:hover { text-decoration: underline; }
 
 @media (max-width: 700px) {
   body, html, ol, li { padding: 0; margin: 0; width: 100%; }

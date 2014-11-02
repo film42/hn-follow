@@ -9,7 +9,7 @@
 
 (defn- save [request]
   (let [username (keyword (request :username))
-        follow (request :follow)]
+        follow (set (request :follow))]
     (redis* (car/set username follow))
     true))
 
