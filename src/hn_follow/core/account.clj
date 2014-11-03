@@ -26,6 +26,7 @@
    :follow (or (redis* (car/get (keyword username)))
                [])})
 
+;; TODO: Expire interaction cache on update
 (defn update [request]
   "Update the follower list of a user"
   (cond
@@ -39,4 +40,4 @@
 
 (defn all []
   {:users
-   (redis* (car/keys :*))})
+   (redis* (car/keys "[a-zA-Z0-9]*"))})

@@ -33,7 +33,7 @@
                  (let [request (parse-string (slurp body) true)]
                    (json (account/update request))))
 
-           (GET "/f" []
+           (GET "/users" []
                 (json (account/all)))
 
            (GET "/a/:username" [username]
