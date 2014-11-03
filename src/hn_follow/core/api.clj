@@ -27,11 +27,15 @@
         response)
       data)))
 
-;; TODO: Cache here and not the interaction tree so we can share cache
-;; among all users. Much better!
 (defn get-item [id]
-  (parse-string
-   (slurp (str base-url "item/" id ".json"))))
+  (let [key (str "##!item#" id)
+        data (cache-get key)]
+    (if (nil? data)
+      (let [response (parse-string
+                      (slurp (str base-url "item/" id ".json")))]
+        (cache-set key response)
+        response)
+      data)))
 
 (defn interactions
   ([user] (interactions user 10))
@@ -48,12 +52,6 @@
 (defn interaction-tree
   ([user] (interaction-tree user 10))
   ([user n]
-     (let [key (str "##!interactions#" (user "id"))
-           data (cache-get key)]
-       (if (nil? data)
-         (let [response (pmap
-                         #(hash-map :tree (parent-item-tree %))
-                         (interactions user n))]
-           (cache-set key response)
-           response)
-         data))))
+     (pmap
+      #(hash-map :tree (parent-item-tree %))
+      (interactions user n))))
