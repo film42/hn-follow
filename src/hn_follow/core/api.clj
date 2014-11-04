@@ -1,19 +1,6 @@
 (ns hn-follow.core.api
   (:require [cheshire.core :refer :all]
-            [taoensso.carmine :as car :refer (wcar)]))
-
-(def redis-conn {:pool {} :spec {:uri (or (System/getenv "REDIS_URL")
-                                          "redis://localhost:6379/")}})
-(defmacro redis* [& body] `(car/wcar redis-conn ~@body))
-
-(defn- cache-get [key]
-  (redis* (car/get key)))
-
-(defn- cache-set
-  ([key value] (cache-set key value 300))
-  ([key value timeout]
-     (redis* (car/set key value)
-             (car/expire key timeout))))
+            [hn-follow.core.cache :refer :all]))
 
 (def base-url "https://hacker-news.firebaseio.com/v0/")
 
