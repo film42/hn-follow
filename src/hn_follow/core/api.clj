@@ -4,25 +4,23 @@
 
 (def base-url "https://hacker-news.firebaseio.com/v0/")
 
+(defmacro cacheable [key stmt]
+  `(let [~'data (cache-get ~key)]
+    (if (nil? ~'data)
+      (let [~'response ~stmt]
+        (cache-set ~key ~'response)
+        ~'response)
+      ~'data)))
+
 (defn get-user [username]
-  (let [key (str "##!user#" username)
-        data (cache-get key)]
-    (if (nil? data)
-      (let [response (parse-string
-                      (slurp (str base-url "user/" username ".json")))]
-        (cache-set key response)
-        response)
-      data)))
+  (cacheable (str "##!user#" username)
+             (parse-string
+              (slurp (str base-url "user/" username ".json")))))
 
 (defn get-item [id]
-  (let [key (str "##!item#" id)
-        data (cache-get key)]
-    (if (nil? data)
-      (let [response (parse-string
-                      (slurp (str base-url "item/" id ".json")))]
-        (cache-set key response)
-        response)
-      data)))
+  (cacheable (str "##!item#" id)
+             (parse-string
+              (slurp (str base-url "item/" id ".json")))))
 
 (defn interactions
   ([user] (interactions user 10))
