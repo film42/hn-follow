@@ -1,5 +1,6 @@
 function heading_template(user_model) {
   var template = "<p class='home-link'><a href='/'>Home</a></p>";
+  template += "<p class='edit-link'><a href='/?user="+user_model.username+"&edit=true'>Edit</a></p>";
   template += "<p><b>"+user_model.username+"</b> is following: ";
 
   for(var i = 0; i < user_model.follow.length; ++i) {
@@ -79,9 +80,17 @@ function get_param(variable) {
   return undefined;
 }
 
-function register_form(username) {
+function register_form(username, followers) {
   $('.form').show();
   $('.form .register input[name~=user]').val(username);
+
+  // Load followers
+  if(followers !== undefined) {
+    for(var i=0; i <= followers.length; ++i) {
+      $('.form .register input[name~=follow'+(i+1)+']').val(followers[i]);
+    }
+  }
+
   $('.form .register').on('submit', function(e) {
     e.preventDefault();
 
@@ -117,6 +126,17 @@ function register_form(username) {
     });
   });
 
+}
+
+function edit_view(username) {
+  var template = "<p class='home-link'><a href='/?user="+username+"'>Back</a>";
+  template += "</p><p>HN Follow - Edit followers</p>";
+  $('.heading').html(template);
+  $('.comments').hide();
+  $('.form .goto').hide();
+  $('.info').hide();
+  $('.user-section').hide();
+  $('.register input[type~=submit]').val('Update');
 }
 
 function render_page(user_model) {
@@ -175,6 +195,12 @@ $(document).ready(function() {
       }
 
       register_form(username);
+      return;
+    }
+
+    if(get_param("edit") == "true") {
+      edit_view();
+      register_form(username, model.follow);
       return;
     }
 
