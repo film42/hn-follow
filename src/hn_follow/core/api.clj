@@ -13,9 +13,11 @@
       ~'data)))
 
 (defn get-user [username]
-  (cacheable (str "##!user#" username)
-             (parse-string
-              (slurp (str base-url "user/" username ".json")))))
+  (or (cacheable (str "##!user#" username)
+                 (parse-string
+                  (slurp (str base-url "user/" username ".json"))))
+      {:username username
+       :follow []}))
 
 (defn get-item [id]
   (cacheable (str "##!item#" id)
