@@ -37,6 +37,8 @@ a:visited { color:#828282; text-decoration:none; }
 
 .pagebreak {page-break-before:always}
 
+.item a:link, .item a:visited { text-decoration:underline; }
+
 pre { overflow: auto; padding: 2px; max-width:600px; }
 pre:hover {overflow:auto}
 
