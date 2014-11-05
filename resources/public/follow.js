@@ -1,9 +1,15 @@
 function heading_template(user_model) {
   var template = "<p class='home-link'><a href='/'>Home</a></p>";
   template += "<p><b>"+user_model.username+"</b> is following: ";
-  user_model.follow.forEach(function(name) {
-    template += name + ", ";
-  });
+
+  for(var i = 0; i < user_model.follow.length; ++i) {
+    template += user_model.follow[i];
+
+    if(i < (user_model.follow.length - 1)) {
+      template += ", ";
+    }
+  }
+
   return template + "</center></p>";
 }
 
@@ -153,7 +159,10 @@ $(document).ready(function() {
   var username = get_param("user");
 
   if(username === undefined) {
-    $('.comment-list').html('HN Follow');
+    $('.heading').html('<p>HN Follow</p>');
+    $('.comments').hide();
+    register_form(username);
+    return;
   }
 
   $.getJSON("/api/a/" + username, function(model) {
@@ -164,6 +173,7 @@ $(document).ready(function() {
       } else {
         $('.heading').html('<p>No such user</p>');
       }
+
       register_form(username);
       return;
     }
