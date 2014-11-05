@@ -68,7 +68,7 @@ pre:hover {overflow:auto}
 .page { width: 100%; }
 .heading { padding: 5px; color: #000000; background: #ff6600; text-align: center; }
 .heading p { margin: 0; }
-.center { background-color: rgb(246, 246, 239); margin: 0 auto; width: 90%; }
+.center { background-color: rgb(246, 246, 239); margin: 0 auto; width: 85%; }
 .form {padding: 5px; display: none; }
 .comments { padding: 5px; }
 .item, .comment { color: #000000; }
