@@ -1,13 +1,24 @@
 (ns hn-follow.core.account
-  (:require [hn-follow.core.cache :refer :all]))
+  (:require [digest :refer [sha-256]]
+            [hn-follow.core.cache :refer :all]))
 
 (def max-account-size 10)
 
 (defn- save [request]
-  (let [username (keyword (request :username))
-        follow (set (request :follow))]
-    (db-set username follow)
-    true))
+  (let [prior (db-get (request :username))
+        username (keyword (request :username))
+        follow (set (request :follow))
+        passd (sha-256 (request :password))]
+    (if (or (nil? prior)                  ;; No such prior user
+            (nil? (prior :password))      ;; Prior user didn't have a password
+            (= passd (prior :password)))  ;; Prior's password matches
+      ;; Authenticated
+      (do
+        (db-set username {:follow follow
+                          :password passd})
+        true)
+      ;; Failed to authenticate
+      false)))
 
 (defn- success [reason]
   {:status :success
@@ -18,22 +29,23 @@
    :reason reason})
 
 (defn following [username]
-  {:username username
-   :follow (or (db-get (keyword username))
-               [])})
+  (let [user (db-get (keyword username))] 
+    {:username username
+     :follow (if-not (nil? user) (user :follow) [])}))
 
 (defn update [request]
   "Update the follower list of a user"
   (cond
    (not (contains? request :username))            (error "No username")
    (empty? (request :username))                   (error "Empty username")
+   (not (contains? request :password))            (error "No password field provided")
    (not (contains? request :follow))              (error "No followers list")
    (not (sequential? (request :follow)))          (error "Followers must be an array")
    (empty? (request :follow))                     (error "Must have at least one follower")
    (> (count (request :follow)) max-account-size) (error "User list too big")
    :else (if (save request)
            (success "Successfully saved!")
-           (error "Could not save"))))
+           (error "Could not authenticate!"))))
 
 (defn all []
   {:users

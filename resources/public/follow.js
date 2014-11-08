@@ -94,7 +94,8 @@ function register_form(username, followers) {
   $('.form .register').on('submit', function(e) {
     e.preventDefault();
 
-    username = $('.form .register input[name~=user]').val();
+    var username = $('.form .register input[name~=user]').val();
+    var password = $('.form .register input[name~=password]').val();
     var follow = [];
 
     // Collect Users from form
@@ -105,7 +106,9 @@ function register_form(username, followers) {
       }
     }
 
-    var request = { username: username, follow: follow };
+    var request = { username: username,
+                    password: password,
+                    follow: follow };
 
     $.ajax({
       url: "/api/u",
