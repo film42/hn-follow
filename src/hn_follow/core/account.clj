@@ -29,9 +29,12 @@
    :reason reason})
 
 (defn following [username]
-  (let [user (db-get (keyword username))] 
+  (let [user (db-get (keyword username))]
     {:username username
-     :follow (if-not (nil? user) (user :follow) [])}))
+     :follow (cond
+              (set? user) user ;; Hack to allow the old way to keep working
+              (not (nil? user)) (user :follow)
+              :else [])}))
 
 (defn update [request]
   "Update the follower list of a user"

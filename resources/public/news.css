@@ -71,12 +71,13 @@ pre:hover {overflow:auto}
 .heading { padding: 5px; color: #000000; background: #ff6600; text-align: center; }
 .heading p { margin: 0; }
 .center { background-color: rgb(246, 246, 239); margin: 0 auto; width: 85%; }
-.form {padding: 5px; display: none; }
+.form { padding: 5px; display: none; }
+.form a { text-decoration: underline; color: #000;}
 .comments { padding: 5px; }
 .item, .comment { color: #000000; }
 .edit-link { padding-left: 10px; }
 .home-link, .edit-link { float: left; }
-.home-link a, .edit-link a {color: #000; }
+.home-link a, .edit-link a { color: #000; }
 .home-link a:hover, .edit-link a:hover { text-decoration: underline; }
 
 @media (max-width: 700px) {
