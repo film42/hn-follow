@@ -8,14 +8,15 @@
   (let [prior (db-get (request :username))
         username (keyword (request :username))
         follow (set (request :follow))
-        passd (sha-256 (request :password))]
+        passd (sha-256 (request :password))
+        new_passd (sha-256 (request :new_password))]
     (if (or (nil? prior)                  ;; No such prior user
             (nil? (prior :password))      ;; Prior user didn't have a password
             (= passd (prior :password)))  ;; Prior's password matches
       ;; Authenticated
       (do
         (db-set username {:follow follow
-                          :password passd})
+                          :password (if-not (nil? new_passd) new_passd passd)})
         true)
       ;; Failed to authenticate
       false)))

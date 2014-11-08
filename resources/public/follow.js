@@ -110,6 +110,10 @@ function register_form(username, followers) {
                     password: password,
                     follow: follow };
 
+    if($("input[name~=new_password_check_box]").prop('checked')) {
+      request.new_password = $("input[name~=new_password]").val();
+    }
+
     $.ajax({
       url: "/api/u",
       method: "post",
@@ -181,6 +185,8 @@ function render_page(user_model) {
 $(document).ready(function() {
   var username = get_param("user");
 
+  $('.new-password-section').hide();
+
   if(username === undefined) {
     $('.heading').html('<p>HN Follow</p>');
     $('.comments').hide();
@@ -204,6 +210,7 @@ $(document).ready(function() {
     if(get_param("edit") == "true") {
       edit_view(username);
       register_form(username, model.follow);
+      $('.new-password-section').show();
       return;
     }
 
