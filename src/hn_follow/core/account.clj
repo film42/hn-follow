@@ -26,8 +26,10 @@
   "Update the follower list of a user"
   (cond
    (not (contains? request :username))            (error "No username")
-   (not (contains? request :follow))              (error "No followers list")
    (empty? (request :username))                   (error "Empty username")
+   (not (contains? request :follow))              (error "No followers list")
+   (not (sequential? (request :follow)))          (error "Followers must be an array")
+   (empty? (request :follow))                     (error "Must have at least one follower")
    (> (count (request :follow)) max-account-size) (error "User list too big")
    :else (if (save request)
            (success "Successfully saved!")

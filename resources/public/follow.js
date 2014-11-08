@@ -121,7 +121,7 @@ function register_form(username, followers) {
         // We're done registering the user, let's reload
         window.location = '/?user=' + username;
       } else {
-        alert("error! " +  JSON.stringify(resp));
+        alert("Error! " +  resp.reason);
       }
     });
   });
