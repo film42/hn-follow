@@ -202,7 +202,7 @@ $(document).ready(function() {
     }
 
     if(get_param("edit") == "true") {
-      edit_view();
+      edit_view(username);
       register_form(username, model.follow);
       return;
     }
