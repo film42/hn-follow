@@ -18,7 +18,7 @@
   ([resp status]
      {:status status
       :headers {"content-type" "application/json"}
-      :body (generate-string resp)}))
+      :body (generate-string resp {:escape-non-ascii true})}))
 
 (defroutes app-routes
   (GET "/" []
