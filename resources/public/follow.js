@@ -187,7 +187,7 @@ $(document).ready(function() {
 
   $('.new-password-section').hide();
 
-  if(username === undefined) {
+  if(username === undefined || username == '') {
     $('.heading').html('<p>HN Follow</p>');
     $('.comments').hide();
     register_form(username);
