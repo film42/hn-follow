@@ -7,6 +7,7 @@
                  [cheshire "5.3.1"]
                  [com.taoensso/carmine "2.7.1"]
                  [digest "1.4.4"]
+                 [hiccup "1.0.5"]
                  [ring/ring-defaults "0.1.2"]]
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler hn-follow.core.handler/app}

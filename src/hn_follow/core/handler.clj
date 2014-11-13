@@ -5,6 +5,7 @@
             [clojure.java.io :as io]
             [hn-follow.core.api :as api]
             [hn-follow.core.account :as account]
+            [hn-follow.core.views :as views]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]))
 
 (def hn-defaults
@@ -22,7 +23,7 @@
 
 (defroutes app-routes
   (GET "/" []
-       (slurp "resources/public/follow.html"))
+       (views/home-page))
 
   (context "/api" []
            (GET "/i/:user" [user]
