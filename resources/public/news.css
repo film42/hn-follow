@@ -74,6 +74,9 @@ pre:hover {overflow:auto}
 .form { padding: 5px; display: none; }
 .form a { text-decoration: underline; color: #000;}
 .comments { padding: 5px; }
+.comment-list { padding-left: 20px; }
+.comment-list li { font-size: 8pt; }
+.item-body { font-size: 10pt; }
 .item, .comment { color: #000000; }
 .edit-link { padding-left: 10px; }
 .home-link, .edit-link { float: left; }
@@ -82,5 +85,6 @@ pre:hover {overflow:auto}
 
 @media (max-width: 700px) {
   body, html, ol, li { padding: 0; margin: 0; width: 100%; }
+  .comment-list { padding: 0; }
   .center { width: 100%; }
 }

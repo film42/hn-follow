@@ -15,7 +15,7 @@ function heading_template(user_model) {
 }
 
 function item_template(item, story) {
-  var template = '<li><p class="comhead">';
+  var template = '<li><div class="item-body"><p class="comhead">';
   template += '<a href="https://news.ycombinator.com/user?id='+item.by+'">'+item.by+'</a>';
   template += ' ' + moment(item.time * 1000).fromNow() + ' ';
   template += '| <a href="https://news.ycombinator.com/item?id='+ item.id +'">Link</a> ';
@@ -27,7 +27,7 @@ function item_template(item, story) {
     template += '<div class="item">'+item.text+'</p>';
   }
 
-  return template + '</li>';
+  return template + '</div></li>';
 }
 
 function sort_clean_data(data) {

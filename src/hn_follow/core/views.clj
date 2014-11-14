@@ -1,7 +1,7 @@
 (ns hn-follow.core.views
   (:require [hiccup.core :refer :all]))
 
-(defn home-page []
+(defn layout [& content]
   (html
    [:head
     [:meta {:http-equiv= "Content-Type" :content= "text/html; charset=UTF-8"}]
@@ -19,38 +19,64 @@
    [:body
     [:div.page
      [:div.center
-      ;; Headings
-      [:div.heading]
+      content]]]))
 
-      ;; Comments
-      [:div.comments
-       [:ol.comment-list "Loading..."]]
+(defn go-to-user-form []
+  (html
+   [:form.goto
+    [:p
+     "Go to your follower list. Or check out the "
+     [:a {:href "/?user=hn-top-10"} "HN Top 10"]
+     " list"]
+    
+    [:p "Username: " [:input {:type "text" :name "user"}]]
+    [:input {:type "submit" :value "Go"}]]))
 
-      ;; Forms
-      [:div.form
-       ;; Go to user form
-       [:form.goto
-        [:p
-         "Go to your follower list. Or check out the "
-         [:a {:href "/?user=hn-top-10"} "HN Top 10"]
-         " list"]
+(defn register-form []
+  (html
+   [:p.info "Create a username and select the people you'd like to follow."]
 
-        [:p "Username: " [:input {:type "text" :name "user"}]]
-        [:input {:type "submit" :value "Go"}]]
+   ;; Fields Section
+   [:form.register
+    [:p.user-section
+     "Username: "
+     [:input {:type "text" :name "user"}]]
+    [:p.password-section
+     "Password:&nbsp; "
+     [:input {:placeholder "Optional" :type "password" :name "password"}]]
+    [:p.new-password-section
+     "New Password: "
+     [:input {:type "password" :name "new_password"}]]
+    [:p.new-password-section
+     "Change Password "
+     [:input {:type "checkbox" :name "new_password_check_box"}]]
 
-       ;; Registration or edit form
-       [:p.info "Create a username and select the people you'd like to follow."]
-       [:form.register
-        [:p.user-section "Username: " [:input {:type "text" :name "user"}]]
-        [:p.password-section "Password:&nbsp; " [:input {:placeholder "Optional" :type "password" :name "password"}]]
-        [:p.new-password-section "New Password: " [:input {:type "password" :name "new_password"}]]
-        [:p.new-password-section "Change Password " [:input {:type "checkbox" :name "new_password_check_box"}]]
+    ;; User List Section
+    [:p "Folllow up to 10 HN users:"]
+    [:ol
+     (for [i (range 1 11)]
+       [:li
+        [:input {:type "text" :name (str "follow" i)}]
+        [:br]])]
+    [:input {:type "submit" :value "Add/ Update"}]]))
 
-        [:p "Folllow up to 10 HN users:"]
-        [:ol
-         (for [i (range 1 11)]
-           [:li [:input {:type "text" :name (str "follow" i)}] [:br]])]
-        [:input {:type "submit" :value "Add/ Update"}]]
+(defn home-page []
+  (layout
+  
+   ;; Headings 
+   [:div.heading]
 
-       ;; Close forms and wrappers and body
-       ]]]]))
+   ;; Comments
+   [:div.comments
+    [:ol.comment-list "Loading..."]]
+
+   ;; Forms
+   [:div.form
+    ;; Go to user form
+    (go-to-user-form)
+
+    ;; Registration or edit form
+    (register-form)
+
+    ;; Close forms and wrappers and body
+    ]))
