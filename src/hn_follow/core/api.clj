@@ -13,11 +13,9 @@
       ~'data)))
 
 (defn get-user [username]
-  (or (cacheable (str "##!user#" username)
-                 (parse-string
-                  (slurp (str base-url "user/" username ".json"))))
-      {:username username
-       :follow []}))
+  (cacheable (str "##!user#" username)
+                  (parse-string
+                   (slurp (str base-url "user/" username ".json")))))
 
 (defn get-item [id]
   (cacheable (str "##!item#" id)
@@ -41,4 +39,4 @@
   ([user n]
      (pmap
       #(hash-map :tree (parent-item-tree %))
-      (interactions user n))))
+      (interactions (or user {}) n))))
