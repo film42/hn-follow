@@ -21,6 +21,18 @@
       :headers {"content-type" "application/json"}
       :body (generate-string resp {:escape-non-ascii true})}))
 
+;;
+;; HN Updates Poller (async)
+;;
+(def hn-poller (api/poll-updates))
+(api/register hn-poller api/reload-items)
+(api/register hn-poller api/reload-users)
+(api/start hn-poller)
+(println "Started HN Update Poller")
+
+;;
+;; Application Routes
+;;
 (defroutes app-routes
   (GET "/" []
        (views/home-page))
