@@ -23,6 +23,10 @@
              (parse-string
               (slurp (str base-url "item/" id ".json")))))
 
+(defn get-updates
+  "Return response regardless of condition"
+  [] (parse-string (slurp (str base-url "/updates.json")) true))
+
 (defn interactions
   ([user] (interactions user 10))
   ([user n] (take n (user "submitted"))))
@@ -46,10 +50,6 @@
 ; Realtime API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn get-updates
-  "Return response regardless of condition"
-  [] (parse-string (slurp (str base-url "/updates.json")) true))
-
 ;;
 ;; Callbacks
 ;;
@@ -74,30 +74,8 @@
         (println "Reloaded key: " key)))))
 
 ;;
-;; Callbacks
+;; Poller
 ;;
-(defn reload-items [updates]
-  (doseq [id (updates :items)]
-    (let [key (str "##!item#" id)]
-      (when-not (empty? (db-keys key))
-        ;; Purge if existst
-        (cache-delete key)
-        ;; Restore the item
-        (get-item id)
-        (println "Reloaded key: " key)))))
-
-(defn reload-users [updates]
-  (doseq [id (updates :profiles)]
-    (let [key (str "##!user#" id)]
-      (when-not (empty? (db-keys key))
-        ;; Purge if existst
-        (cache-delete key)
-        ;; Restore the user
-        (get-item id)
-        (println "Reloaded key: " key)))))
-
-
-
 (defn poll-updates []
   ;; We can rest for 30-seconds because that's about
   ;; how long the API interval is +/- 5-seconds.                

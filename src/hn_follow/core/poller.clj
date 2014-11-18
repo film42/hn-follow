@@ -8,13 +8,13 @@
   (register [_ cb] "Register a callback with the poller"))
 
 (defn poller
-  "Run a poller loop for some agent using some observable function `f` and some delay time in seconds"
+  "Run a poller loop for some agent using some observable function `f` and some delay time in seconds."
   [f delay]
   (let [cond-var (atom true)
         state (atom {})
         callbacks (atom [])
         status (agent {})]
-    ;; Create new poller object
+    ;; Create new poller object. Reify to closure the let-block values
     (reify IPoller
       ;; Start the poller
       (start [_]
