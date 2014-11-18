@@ -24,10 +24,7 @@
 ;;
 ;; HN Updates Poller (async)
 ;;
-(def hn-poller (api/poll-updates))
-(api/register hn-poller api/reload-items)
-(api/register hn-poller api/reload-users)
-(api/start hn-poller)
+(def hn-poller (api/poll-updates-defaults))
 (println "Started HN Update Poller")
 
 ;;
