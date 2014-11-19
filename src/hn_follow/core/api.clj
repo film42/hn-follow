@@ -70,7 +70,7 @@
         ;; Purge if existst
         (cache-delete key)
         ;; Restore the user
-        (get-item id)
+        (get-user id)
         (println "Reloaded key: " key)))))
 
 ;;
