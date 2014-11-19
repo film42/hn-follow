@@ -18,11 +18,14 @@
     (reify IPoller
       ;; Start the poller
       (start [_]
+        ;; Agent cannot crash, set to :contiune on error
+        (set-error-mode! status :continue)
+        ;; Async start the poller
         (send-off status
          (fn [_] (while @cond-var
                   (let [resp (f)]
                     ;; Alert registered callbacks of messages
-                    (when-not (or (nil? resp) (= resp @state))
+                    (when-not (= resp @state)
                       (reset! state resp)
                       (doseq [cb @callbacks]
                         (cb @state))))
