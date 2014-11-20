@@ -28,8 +28,7 @@
   [] (parse-string (slurp (str base-url "/updates.json")) true))
 
 (defn interactions
-  ([user] (interactions user 10))
-  ([user n] (take n (user "submitted"))))
+  [user] (user "submitted"))
 
 (defn parent-item-tree [item-id]
   (let [item (get-item item-id)]
@@ -40,11 +39,13 @@
             (conj acc x)))))
 
 (defn interaction-tree
-  ([user] (interaction-tree user 10))
-  ([user n]
+  "Return the interaction tree for users. Allow to skip for pagination support"
+  ([user] (interaction-tree user 0 10))
+  ([user skip n]
      (pmap
       #(hash-map :tree (parent-item-tree %))
-      (interactions (or user {}) n))))
+      (take n (drop skip
+                    (interactions (or user {})))))))
 
 ;
 ; Realtime API
