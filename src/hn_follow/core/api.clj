@@ -78,9 +78,9 @@
 ;; Poller
 ;;
 (defn poll-updates []
-  ;; We can rest for 30-seconds because that's about
-  ;; how long the API interval is +/- 5-seconds.                
-  (poller/poller get-updates 30))
+  ;; We can rest for 20-seconds, because HN refreshes about
+  ;; every 30 +/- 5-seconds.                
+  (poller/poller get-updates 20))
 
 (defn poll-updates-defaults []
   (let [instance (poller/poller get-updates 30)]
