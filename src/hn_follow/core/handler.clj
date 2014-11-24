@@ -2,7 +2,7 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [cheshire.core :refer :all]
-            [clojure.java.io :as io]
+            [overtone.at-at :as aa] ; Forked
             [hn-follow.core.api :as api]
             [hn-follow.core.account :as account]
             [hn-follow.core.views :as views]
@@ -14,6 +14,12 @@
                       :session   {:flash true
                                   :cookie-attrs {:http-only true}}))
 
+(defn str->int [s]
+  (if (string? s)
+    (let [v (read-string s)]
+      (if (integer? v) v 0))
+    0))
+
 (defn json
   ([resp] (json resp 200) )
   ([resp status]
@@ -21,14 +27,25 @@
       :headers {"content-type" "application/json"}
       :body (generate-string resp {:escape-non-ascii true})}))
 
+;;
+;; Process HN Updates (async)
+;;
+(def hn-tp (aa/mk-pool))
+(aa/interspaced 15000 api/sync-updates hn-tp :desc "Check for API Updates")
+
+;;
+;; Application Routes
+;;
 (defroutes app-routes
   (GET "/" []
        (views/home-page))
 
   (context "/api" []
-           (GET "/i/:user" [user]
-                (json {:interactions
-                       (-> user api/get-user (api/interaction-tree 5))}))
+           (GET "/i/:user" {params :params}
+                (let [page (str->int (params :page))
+                      offset (* 5 (dec page))] ;; Dec page so 1->0,2->5
+                  (json {:interactions
+                         (-> (params :user) api/get-user (api/interaction-tree offset 5))})))
            
            (POST "/u" {body :body}
                  (let [request (parse-string (slurp body) true)]

@@ -7,7 +7,7 @@
     [:meta {:http-equiv= "Content-Type" :content= "text/html; charset=UTF-8"}]
     [:meta {:name "referrer" :content "origin"}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-    [:link {:rel "stylesheet" :type "txt/css" :href "/news.css"}]
+    [:link {:rel "stylesheet" :type "text/css" :href "/news.css"}]
 
     [:script {:type "text/javascript" :src "/jquery-1.11.1.min.js"}]
     [:script {:type "text/javascript" :src "/moment.min.js"}]

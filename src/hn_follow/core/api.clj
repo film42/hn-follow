@@ -22,9 +22,12 @@
              (parse-string
               (slurp (str base-url "item/" id ".json")))))
 
+(defn get-updates
+  "Return response regardless of condition"
+  [] (parse-string (slurp (str base-url "/updates.json")) true))
+
 (defn interactions
-  ([user] (interactions user 10))
-  ([user n] (take n (user "submitted"))))
+  [user] (user "submitted"))
 
 (defn parent-item-tree [item-id]
   (let [item (get-item item-id)]
@@ -35,8 +38,43 @@
             (conj acc x)))))
 
 (defn interaction-tree
-  ([user] (interaction-tree user 10))
-  ([user n]
+  "Return the interaction tree for users. Allow to skip for pagination support"
+  ([user] (interaction-tree user 0 10))
+  ([user skip n]
      (pmap
       #(hash-map :tree (parent-item-tree %))
-      (interactions (or user {}) n))))
+      (take n (drop skip
+                    (interactions (or user {})))))))
+
+;
+; Realtime API
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn reload-items [items]
+  (doseq [id items]
+    (let [key (str "##!item#" id)]
+      (when-not (empty? (db-keys key))
+        ;; Purge if existst
+        (cache-delete key)
+        ;; Restore the item
+        (get-item id)
+        (println "Reloaded key: " key)))))
+
+(defn reload-users [users]
+  (doseq [id users]
+    (let [key (str "##!user#" id)]
+      (when-not (empty? (db-keys key))
+        ;; Purge if existst
+        (cache-delete key)
+        ;; Restore the user
+        (get-user id)
+        (println "Reloaded key: " key)))))
+
+;; TODO: Make this update state cleaner
+(def -update-state (atom {}))
+(defn sync-updates []
+  (let [latest (get-updates)]
+    (when-not (= @-update-state latest)
+      (reload-items (or (latest :items)    []))
+      (reload-users (or (latest :profiles) []))
+      (reset! -update-state latest))))
