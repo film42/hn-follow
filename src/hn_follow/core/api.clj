@@ -1,7 +1,6 @@
 (ns hn-follow.core.api
   (:require [cheshire.core :refer :all]
-            [hn-follow.core.cache :refer :all]
-            [hn-follow.core.poller :as poller]))
+            [hn-follow.core.cache :refer :all]))
 
 (def base-url "https://hacker-news.firebaseio.com/v0/")
 
@@ -51,11 +50,8 @@
 ; Realtime API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;
-;; Callbacks
-;;
-(defn reload-items [updates]
-  (doseq [id (updates :items)]
+(defn reload-items [items]
+  (doseq [id items]
     (let [key (str "##!item#" id)]
       (when-not (empty? (db-keys key))
         ;; Purge if existst
@@ -64,8 +60,8 @@
         (get-item id)
         (println "Reloaded key: " key)))))
 
-(defn reload-users [updates]
-  (doseq [id (updates :profiles)]
+(defn reload-users [users]
+  (doseq [id users]
     (let [key (str "##!user#" id)]
       (when-not (empty? (db-keys key))
         ;; Purge if existst
@@ -74,18 +70,11 @@
         (get-user id)
         (println "Reloaded key: " key)))))
 
-;;
-;; Poller
-;;
-(defn poll-updates []
-  ;; We can rest for 20-seconds, because HN refreshes about
-  ;; every 30 +/- 5-seconds.                
-  (poller/poller get-updates 20))
-
-(defn poll-updates-defaults []
-  (let [instance (poller/poller get-updates 30)]
-    (poller/register instance reload-items)
-    (poller/register instance reload-users)
-    (poller/start instance)
-    ;; Rerturn poller instance
-    instance))
+;; TODO: Make this update state cleaner
+(def -update-state (atom {}))
+(defn sync-updates []
+  (let [latest (get-updates)]
+    (when-not (= @-update-state latest)
+      (reload-items (or (latest :items)    []))
+      (reload-users (or (latest :profiles) []))
+      (reset! -update-state latest))))

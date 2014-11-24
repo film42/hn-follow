@@ -8,6 +8,7 @@
                  [com.taoensso/carmine "2.7.1"]
                  [digest "1.4.4"]
                  [hiccup "1.0.5"]
+                 [silasdavis/at-at "1.2.0"] ; Forked
                  [ring/ring-defaults "0.1.2"]]
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler hn-follow.core.handler/app}

@@ -2,7 +2,7 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [cheshire.core :refer :all]
-            [clojure.java.io :as io]
+            [overtone.at-at :as aa] ; Forked
             [hn-follow.core.api :as api]
             [hn-follow.core.account :as account]
             [hn-follow.core.views :as views]
@@ -28,10 +28,10 @@
       :body (generate-string resp {:escape-non-ascii true})}))
 
 ;;
-;; HN Updates Poller (async)
+;; Process HN Updates (async)
 ;;
-(def hn-poller (api/poll-updates-defaults))
-(println "Started HN Update Poller")
+(def hn-tp (aa/mk-pool))
+(aa/interspaced 15000 api/sync-updates hn-tp :desc "Check for API Updates")
 
 ;;
 ;; Application Routes
