@@ -32,6 +32,7 @@
 ;;
 (def hn-tp (aa/mk-pool))
 (aa/interspaced 15000 api/sync-updates hn-tp :desc "Check for API Updates")
+(aa/show-schedule hn-tp)
 
 ;;
 ;; Application Routes
