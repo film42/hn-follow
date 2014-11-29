@@ -12,6 +12,7 @@
         ~'response)
       ~'data)))
 
+;Gets information about a user from hacker news api
 (defn get-user [username]
   (cacheable (str "##!user#" username)
                   (parse-string
@@ -40,3 +41,5 @@
      (pmap
       #(hash-map :tree (parent-item-tree %))
       (interactions (or user {}) n))))
+
+(interaction-tree (get-user "film42"))
