@@ -30,6 +30,15 @@ function item_template(item, story) {
   return template + '</div></li>';
 }
 
+function pagination_template(user, page) {
+  var template = '<div class="pagination">';
+  if(page > 1) {
+    template += '<a href="/?user='+user+'&page='+(page - 1)+'">Previous</a>';
+  }
+  template += '<a href="/?user='+user+'&page='+(page + 1)+'">Next</a>';
+  return template + '</div>';
+}
+
 function sort_clean_data(data) {
   var all_comments = [];
 
@@ -63,9 +72,9 @@ function prune_tree(data) {
   return [comment, post];
 }
 
-function promise_for_usernames(names) {
+function promise_for_usernames(names, page) {
   return names.map(function(name) {
-    return $.getJSON("/api/i/" + name);
+    return $.getJSON("/api/i/" + name + "?page=" + page);
   });
 }
 
@@ -146,10 +155,10 @@ function edit_view(username) {
   $('.register input[type~=submit]').val('Update');
 }
 
-function render_page(user_model) {
+function render_page(user_model, page_number) {
 
   var usernames = user_model.follow;
-  var p_array = promise_for_usernames(usernames);
+  var p_array = promise_for_usernames(usernames, page_number);
 
   $.when.apply($, p_array).done(function() {
 
@@ -179,6 +188,9 @@ function render_page(user_model) {
 
       $('.comment-list').append( item_template( comment, post ) );
     });
+
+    // Render Pagination
+
   });
 }
 
@@ -214,6 +226,13 @@ $(document).ready(function() {
       return;
     }
 
-    render_page(model);
+    var page_number = parseInt(get_param("page"));
+    if(isNaN(page_number)) {
+      page_number = 1;
+    }
+
+    render_page(model, page_number);
+    console.log(page_number);
+    $('.comments').append(pagination_template(username, page_number));
   });
 });

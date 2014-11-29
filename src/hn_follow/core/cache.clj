@@ -13,10 +13,13 @@
   (redis* (car/get key)))
 
 (defn cache-set
-  ([key value] (cache-set key value 1200)) ;; 20 min
+  ([key value] (cache-set key value 43200)) ;; 12 hours
   ([key value timeout]
      (redis* (car/set key value)
              (car/expire key timeout))))
+
+(defn cache-delete [key]
+  (redis* (car/del key)))
 
 (defn db-get [key]
   (cache-get key))
