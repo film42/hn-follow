@@ -12,6 +12,7 @@
         ~'response)
       ~'data)))
 
+;Gets information about a user from hacker news api
 (defn get-user [username]
   (cacheable (str "##!user#" username)
                   (parse-string
@@ -81,3 +82,4 @@
         (reset! -update-state latest)))
     (catch
         Exception e (println "Exception in Sync Updates:" (.getMessage e)))))
+
