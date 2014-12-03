@@ -9,14 +9,17 @@
         username (keyword (request :username))
         follow (set (request :follow))
         passd (sha-256 (request :password))
-        new_passd (sha-256 (request :new_password))]
+        new_passd (sha-256 (request :new_password))
+        email (request :email)]
+    (println request)
     (if (or (nil? prior)                  ;; No such prior user
             (nil? (prior :password))      ;; Prior user didn't have a password
             (= passd (prior :password)))  ;; Prior's password matches
       ;; Authenticated
       (do
         (db-set username {:follow follow
-                          :password (if-not (nil? new_passd) new_passd passd)})
+                          :password (if-not (nil? new_passd) new_passd passd)
+                          :email email})
         true)
       ;; Failed to authenticate
       false)))
@@ -35,7 +38,8 @@
      :follow (cond
               (set? user) user ;; Hack to allow the old way to keep working
               (not (nil? user)) (user :follow)
-              :else [])}))
+              :else [])
+     :email (user :email)}))
 
 (defn update [request]
   "Update the follower list of a user"

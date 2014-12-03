@@ -15,7 +15,7 @@
     [:script {:type "text/javascript" :src "/ga.js"}]
 
     [:title "HN Follow"]]
-   
+
    [:body
     [:div.page
      [:div.center
@@ -28,7 +28,7 @@
      "Go to your follower list. Or check out the "
      [:a {:href "/?user=hn-top-10"} "HN Top 10"]
      " list"]
-    
+
     [:p "Username: " [:input {:type "text" :name "user"}]]
     [:input {:type "submit" :value "Go"}]]))
 
@@ -50,6 +50,12 @@
     [:p.new-password-section
      "Change Password "
      [:input {:type "checkbox" :name "new_password_check_box"}]]
+    [:p.email-section
+     "Email:"
+     [:input {:type "text" :name "email"}]]
+    [:p.email-check-section
+     "Sign up for weekly email "
+     [:input {:type "checkbox" :name "weekly_email" }]]
 
     ;; User List Section
     [:p "Folllow up to 10 HN users:"]
@@ -62,8 +68,8 @@
 
 (defn home-page []
   (layout
-  
-   ;; Headings 
+
+   ;; Headings
    [:div.heading]
 
    ;; Comments

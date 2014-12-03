@@ -89,9 +89,14 @@ function get_param(variable) {
   return undefined;
 }
 
-function register_form(username, followers) {
+function register_form(username, followers, email) {
   $('.form').show();
   $('.form .register input[name~=user]').val(username);
+
+  if(email !== null){
+    $('.form .register input[name~=weekly_email]').prop('checked',true);
+    $('.form .register input[name~=email]').val(email);
+  }
 
   // Load followers
   if(followers !== undefined) {
@@ -106,6 +111,10 @@ function register_form(username, followers) {
     var username = $('.form .register input[name~=user]').val();
     var password = $('.form .register input[name~=password]').val();
     var follow = [];
+    var email = null;
+    if($('.form .register input[name~=weekly_email]').prop('checked')){
+      email = $('.form .register input[name~=email]').val();
+    }
 
     // Collect Users from form
     for(var i=1; i <= 10; ++i) {
@@ -117,7 +126,8 @@ function register_form(username, followers) {
 
     var request = { username: username,
                     password: password,
-                    follow: follow };
+                    follow: follow,
+                    email: email};
 
     if($("input[name~=new_password_check_box]").prop('checked')) {
       request.new_password = $("input[name~=new_password]").val();
@@ -221,7 +231,7 @@ $(document).ready(function() {
 
     if(get_param("edit") == "true") {
       edit_view(username);
-      register_form(username, model.follow);
+      register_form(username, model.follow, model.email);
       $('.new-password-section').show();
       return;
     }
