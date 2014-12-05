@@ -47,6 +47,28 @@
       (take n (drop skip
                     (interactions (or user {})))))))
 
+(defn- tree-template [tree]
+  (let [root-item (first (filter #(= "story" (% "type")) tree))
+        latest (first tree)]
+    {:by (latest "by")
+     :id (latest "id")
+     :parent (latest "parent")
+     :root (root-item "id")
+     :type (latest "type")
+     :title (root-item "title")
+     :url (root-item "url")
+     :time (latest "time")
+     :text (latest "text")}))
+
+(defn interaction-feed
+  ([user] (interaction-feed user 0 10))
+  ([user skip n]
+     (let [tree (interaction-tree user skip n)
+           clean (map #(% :tree) tree)
+           ;; Remove any deleted comments now
+           valid (map #(filter (fn [x] (nil? (x "deleted"))) %) clean)]
+       (map tree-template valid))))
+
 ;
 ; Realtime API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
