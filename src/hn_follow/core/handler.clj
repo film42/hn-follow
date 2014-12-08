@@ -47,6 +47,12 @@
                       offset (* 5 (dec page))] ;; Dec page so 1->0,2->5
                   (json {:interactions
                          (-> (params :user) api/get-user (api/interaction-tree offset 5))})))
+
+           (GET "/u/:user" {params :params}
+                (let [page (str->int (params :page))
+                      offset (* 5 (dec page))] ;; Dec page so 1->0,2->5
+                  (json {:interactions
+                         (-> (params :user) api/get-user (api/interaction-feed offset 5))})))
            
            (POST "/u" {body :body}
                  (let [request (parse-string (slurp body) true)]
