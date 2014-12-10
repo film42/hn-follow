@@ -14,17 +14,17 @@ function heading_template(user_model) {
   return template + "</center></p>";
 }
 
-function item_template(item, story) {
+function item_template(interaction) {
   var template = '<li><div class="item-body"><p class="comhead">';
-  template += '<a href="https://news.ycombinator.com/user?id='+item.by+'">'+item.by+'</a>';
-  template += ' ' + moment(item.time * 1000).fromNow() + ' ';
-  template += '| <a href="https://news.ycombinator.com/item?id='+ item.id +'">Link</a> ';
-  template += '| <a href="https://news.ycombinator.com/item?id='+ story.id +'">Root</a> ';
+  template += '<a href="https://news.ycombinator.com/user?id='+interaction.by+'">'+interaction.by+'</a>';
+  template += ' ' + moment(interaction.time * 1000).fromNow() + ' ';
+  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Link</a> ';
+  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Root</a> ';
 
-  template += "| <u><a href='" + story.url + "'>" + story.title + "</a></u>";
+  template += "| <u><a href='" + interaction.url + "'>" + interaction.title + "</a></u>";
 
-  if(item.text !== undefined) {
-    template += '<div class="item">'+item.text+'</p>';
+  if(interaction.text !== undefined) {
+    template += '<div class="item">'+interaction.text+'</p>';
   }
 
   return template + '</div></li>';
@@ -39,42 +39,9 @@ function pagination_template(user, page) {
   return template + '</div>';
 }
 
-function sort_clean_data(data) {
-  var all_comments = [];
-
-  // Flat map
-  data.forEach(function(innteractions_list) {
-    innteractions_list.forEach(function(pair) {
-      all_comments.push(pair);
-    });
-  });
-
-  // Sort
-  all_comments.sort(function(a, b) {
-    if( a[0].time > b[0].time ) return -1;
-    else return 1;
-  });
-
-  return all_comments;
-}
-
-function prune_tree(data) {
-  var tree = data.tree;
-
-  tree.sort(function(a, b) {
-    if( a.id > b.id ) return -1;
-    else return 1;
-  });
-
-  var post = tree.filter(function(item) { return item.type == "story"; })[0];
-  var comment = tree[0];
-
-  return [comment, post];
-}
-
 function promise_for_usernames(names, page) {
   return names.map(function(name) {
-    return $.getJSON("/api/i/" + name + "?page=" + page);
+    return $.getJSON("/api/u/" + name + "?page=" + page);
   });
 }
 
@@ -170,23 +137,21 @@ function render_page(user_model, page_number) {
       data = [ arguments[0] ];
     }
 
-    var clean_data = data.map(function(da) {
-      return da.interactions.map(prune_tree);
-    });
+    var all_user_lists = data.map(function(user_list) { return user_list.interactions; });
+    var all_interactions = [].concat.apply([], all_user_lists);
 
-    var all_interactions = sort_clean_data(clean_data);
+    var sorted_interactions = all_interactions.sort(function(a, b) {
+      if( a.time >= b.time ) return -1;
+      else return 1;
+    });
 
     $('.heading').html(heading_template(user_model) );
     $('.comment-list').html('');
 
     // Each interaction pair
-    all_interactions.forEach(function(pair) {
-      var comment = pair[0];
-      var post = pair[1];
+    sorted_interactions.forEach(function(interaction) {
 
-      if( comment.deleted ) return;
-
-      $('.comment-list').append( item_template( comment, post ) );
+      $('.comment-list').append( item_template( interaction ) );
     });
 
     // Render Pagination
@@ -232,7 +197,7 @@ $(document).ready(function() {
     }
 
     render_page(model, page_number);
-    console.log(page_number);
+
     $('.comments').append(pagination_template(username, page_number));
   });
 });
