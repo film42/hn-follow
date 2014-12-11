@@ -1,6 +1,10 @@
 (ns hn-follow.core.views
   (:require [hiccup.core :refer :all]))
 
+;;
+;; Site Template
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn layout [& content]
   (html
    [:head
@@ -80,3 +84,52 @@
 
     ;; Close forms and wrappers and body
     ]))
+
+;;
+;; Email Template
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn email-template [user interactions]
+  (html
+   "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
+   [:html
+    [:body
+     [:div {:style "font-family: Verdana; font-size: 10pt; color: #000000;"}
+      [:center
+       [:table {:border 0 :cellpadding 0 :cellspacing 0 :width "100%" :style "background-color: #F6F6EF;"}
+        ;; Header
+        [:thead {:style "background-color: #FF6600;"}
+         [:tr 
+          [:td {:style "padding: 0.5em;"} "HN Follow - Weekly Updates for " (user "id")]]]
+
+        ;; Content
+        [:tbody
+         [:tr
+          [:td {:style "padding: 0.5em;"}
+           [:ol 
+            (for [item interactions]
+              [:li
+               [:p {:style "font-size: 9pt;"}
+                [:font {:color "#000000"}
+                 ;; Heading
+                 [:p {:style "color: #828282; font-size: 8pt;"}
+                  [:a {:style "color: #828282; font-size: 8pt;"
+                       :href (str "https://news.ycombinator.com/user?id=" (user "id"))} (user "id")]
+                  " | "
+                  [:a {:style "color: #828282; font-size: 8pt;"
+                       :href (str "https://news.ycombinator.com/item?id=" (:id item))} "Link"]
+                  " | "
+                  [:a {:style "color: #828282; font-size: 8pt;"
+                       :href (str "https://news.ycombinator.com/item?id=" (:parent item))} "Root"]
+                  [:u
+                   [:a {:style "color: #828282; font-size: 8pt;"
+                        :href (:url item)} (:title item)]]]
+
+                 ;; Comment
+                 (:text item)]]])]]]]]
+
+       ;; Footer
+       [:div {:style "color: #888888; font-size: 8pt; margin-top: 1em; margin-left: auto; margin-right: auto;"}
+        [:span
+         [:a {:href (str "https://hn-follow.desh.es?user=" (user "id") "&edit=true")
+              :style "#000000"} "Unsubscribe"]]]]]]]))
