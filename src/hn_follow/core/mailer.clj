@@ -33,7 +33,7 @@
           email (:email (account/following next-user))]
       (if (not (nil? email))
         (println (str "update sent to " next-user "mailer response message: "
-         (send-update email next-user))))
+         (send-email-update email next-user))))
       (if (not(empty?(rest users)))
         (recur (rest users))))))
 
