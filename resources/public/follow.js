@@ -1,3 +1,55 @@
+function get_time_from_now(seconds) {
+  var from_now;
+  var current_time = new Date() / 1000;
+  var seconds_since = current_time - seconds;
+
+  if(seconds_since < 3600 ) {
+    var minutes = Math.floor(seconds_since / 60);
+    if(minutes === 1) {
+      from_now = minutes + " minute ago"
+    } else {
+      from_now = minutes + " minutes ago";
+    }
+  } else if(seconds_since < 86400) {
+    var hours = Math.floor(seconds_since / 3600);
+    if(hours === 1) {
+      from_now = hours + " hour ago";
+    } else {
+      from_now = hours + " hours ago";
+    }
+  } else if(seconds_since < 604800) {
+    var days = Math.floor(seconds_since / 86400);
+    if(days === 1) {
+      from_now = days + " day ago";
+    } else {
+      from_now = days + " days ago";
+    }
+  } else if(seconds_since < 2678000) {
+    var weeks = Math.floor(seconds_since / 604800);
+    if(weeks === 1) {
+      from_now = weeks + " week ago";
+    } else {
+      from_now = weeks + " weeks ago";
+    }
+  } else if(seconds_since < 31560000) {
+    var months = Math.floor(seconds_since / 2678000);
+    if(monts === 1) {
+      from_now = months + " month ago";
+    } else {
+      from_now = months + " months ago";
+    }
+  } else {
+    var years = Math.floor(seconds_since / 31560000);
+    if(years === 1) {
+      from_now = years + " year ago";
+    } else {
+      from_now = years + " years ago";
+    }
+  }
+
+  return from_now;
+}
+
 function heading_template(user_model) {
   var template = "<p class='home-link'><a href='/'>Home</a></p>";
   template += "<p class='edit-link'><a href='/?user="+user_model.username+"&edit=true'>Edit</a></p>";
@@ -14,17 +66,17 @@ function heading_template(user_model) {
   return template + "</center></p>";
 }
 
-function item_template(item, story) {
+function item_template(interaction) {
   var template = '<li><div class="item-body"><p class="comhead">';
-  template += '<a href="https://news.ycombinator.com/user?id='+item.by+'">'+item.by+'</a>';
-  template += ' ' + moment(item.time * 1000).fromNow() + ' ';
-  template += '| <a href="https://news.ycombinator.com/item?id='+ item.id +'">Link</a> ';
-  template += '| <a href="https://news.ycombinator.com/item?id='+ story.id +'">Root</a> ';
+  template += '<a href="https://news.ycombinator.com/user?id='+interaction.by+'">'+interaction.by+'</a>';
+  template += ' ' + get_time_from_now(interaction.time) + ' ';
+  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Link</a> ';
+  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Root</a> ';
 
-  template += "| <u><a href='" + story.url + "'>" + story.title + "</a></u>";
+  template += "| <u><a href='" + interaction.url + "'>" + interaction.title + "</a></u>";
 
-  if(item.text !== undefined) {
-    template += '<div class="item">'+item.text+'</p>';
+  if(interaction.text !== undefined) {
+    template += '<div class="item">'+interaction.text+'</p>';
   }
 
   return template + '</div></li>';
@@ -39,42 +91,9 @@ function pagination_template(user, page) {
   return template + '</div>';
 }
 
-function sort_clean_data(data) {
-  var all_comments = [];
-
-  // Flat map
-  data.forEach(function(innteractions_list) {
-    innteractions_list.forEach(function(pair) {
-      all_comments.push(pair);
-    });
-  });
-
-  // Sort
-  all_comments.sort(function(a, b) {
-    if( a[0].time > b[0].time ) return -1;
-    else return 1;
-  });
-
-  return all_comments;
-}
-
-function prune_tree(data) {
-  var tree = data.tree;
-
-  tree.sort(function(a, b) {
-    if( a.id > b.id ) return -1;
-    else return 1;
-  });
-
-  var post = tree.filter(function(item) { return item.type == "story"; })[0];
-  var comment = tree[0];
-
-  return [comment, post];
-}
-
 function promise_for_usernames(names, page) {
   return names.map(function(name) {
-    return $.getJSON("/api/i/" + name + "?page=" + page);
+    return $.getJSON("/api/u/" + name + "?page=" + page);
   });
 }
 
@@ -180,23 +199,21 @@ function render_page(user_model, page_number) {
       data = [ arguments[0] ];
     }
 
-    var clean_data = data.map(function(da) {
-      return da.interactions.map(prune_tree);
-    });
+    var all_user_lists = data.map(function(user_list) { return user_list.interactions; });
+    var all_interactions = [].concat.apply([], all_user_lists);
 
-    var all_interactions = sort_clean_data(clean_data);
+    var sorted_interactions = all_interactions.sort(function(a, b) {
+      if( a.time >= b.time ) return -1;
+      else return 1;
+    });
 
     $('.heading').html(heading_template(user_model) );
     $('.comment-list').html('');
 
     // Each interaction pair
-    all_interactions.forEach(function(pair) {
-      var comment = pair[0];
-      var post = pair[1];
+    sorted_interactions.forEach(function(interaction) {
 
-      if( comment.deleted ) return;
-
-      $('.comment-list').append( item_template( comment, post ) );
+      $('.comment-list').append( item_template( interaction ) );
     });
 
     // Render Pagination
@@ -233,6 +250,7 @@ $(document).ready(function() {
       edit_view(username);
       register_form(username, model.follow, model.email);
       $('.new-password-section').show();
+      $('p.subheader').hide();
       return;
     }
 
@@ -242,7 +260,7 @@ $(document).ready(function() {
     }
 
     render_page(model, page_number);
-    console.log(page_number);
+
     $('.comments').append(pagination_template(username, page_number));
   });
 });
