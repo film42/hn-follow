@@ -15,7 +15,7 @@
     [:script {:type "text/javascript" :src "/ga.js"}]
 
     [:title "HN Follow"]]
-   
+
    [:body
     [:div.page
      [:div.center
@@ -24,17 +24,18 @@
 (defn go-to-user-form []
   (html
    [:form.goto
-    [:p
-     "Go to your follower list. Or check out the "
+    [:p "The purpose of this site is to allow you to follow other users on Hacker News. You can quickly and easily see
+         all of the posts of the users you are following."]
+    [:p "Go to your follower list. Or check out the "
      [:a {:href "/?user=hn-top-10"} "HN Top 10"]
-     " list"]
-    
+     " list."]
+
     [:p "Username: " [:input {:type "text" :name "user"}]]
-    [:input {:type "submit" :value "Go"}]]))
+    [:input {:type "submit" :value "    Go    "}]]))
 
 (defn register-form []
   (html
-   [:p.info "Create a username and select the people you'd like to follow."]
+   [:p.info "Create a username and enter the users you would like to follow."]
 
    ;; Fields Section
    [:form.register
@@ -42,7 +43,7 @@
      "Username: "
      [:input {:type "text" :name "user"}]]
     [:p.password-section
-     "Password:&nbsp; "
+     "Password:&ensp;"
      [:input {:placeholder "Optional" :type "password" :name "password"}]]
     [:p.new-password-section
      "New Password: "
@@ -52,18 +53,18 @@
      [:input {:type "checkbox" :name "new_password_check_box"}]]
 
     ;; User List Section
-    [:p "Folllow up to 10 HN users:"]
+    [:p "Follow up to 10 HN users:"]
     [:ol
      (for [i (range 1 11)]
        [:li
         [:input {:type "text" :name (str "follow" i)}]
         [:br]])]
-    [:input {:type "submit" :value "Add/ Update"}]]))
+    [:input {:type "submit" :value "Add/Update"}]]))
 
 (defn home-page []
   (layout
-  
-   ;; Headings 
+
+   ;; Headings
    [:div.heading]
 
    ;; Comments
