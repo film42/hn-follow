@@ -17,7 +17,7 @@ function heading_template(user_model) {
 function item_template(interaction) {
   var template = '<li><div class="item-body"><p class="comhead">';
   template += '<a href="https://news.ycombinator.com/user?id='+interaction.by+'">'+interaction.by+'</a>';
-  template += ' ' + moment(interaction.time * 1000).fromNow() + ' ';
+  template += ' ' + get_Time_From_Now(interaction.time) + ' ';
   template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Link</a> ';
   template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Root</a> ';
 
@@ -28,6 +28,58 @@ function item_template(interaction) {
   }
 
   return template + '</div></li>';
+}
+
+function get_Time_From_Now(seconds) {
+  var from_now;
+  var current_time = new Date() / 1000;
+  var seconds_since = current_time - seconds;
+
+  if(seconds_since < 3600 ) {
+    var minutes = Math.floor(seconds_since / 60);
+    if(minutes === 1) {
+      from_now = minutes + " minute ago"
+    } else {
+      from_now = minutes + " minutes ago";
+    }
+  } else if(seconds_since < 86400) {
+    var hours = Math.floor(seconds_since / 3600);
+    if(hours === 1) {
+      from_now = hours + " hour ago";
+    } else {
+      from_now = hours + " hours ago";
+    }
+  } else if(seconds_since < 604800) {
+    var days = Math.floor(seconds_since / 86400);
+    if(days === 1) {
+      from_now = days + " day ago";
+    } else {
+      from_now = days + " days ago";
+    }
+  } else if(seconds_since < 2678000) {
+    var weeks = Math.floor(seconds_since / 604800);
+    if(weeks === 1) {
+      from_now = weeks + " week ago";
+    } else {
+      from_now = weeks + " weeks ago";
+    }
+  } else if(seconds_since < 31560000) {
+    var months = Math.floor(seconds_since / 2678000);
+    if(monts === 1) {
+      from_now = months + " month ago";
+    } else {
+      from_now = months + " months ago";
+    }
+  } else {
+    var years = Math.floor(seconds_since / 31560000);
+    if(years === 1) {
+      from_now = years + " year ago";
+    } else {
+      from_now = years + " years ago";
+    }
+  }
+
+  return from_now;
 }
 
 function pagination_template(user, page) {
