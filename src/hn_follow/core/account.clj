@@ -11,7 +11,6 @@
         passd (sha-256 (request :password))
         new_passd (sha-256 (request :new_password))
         email (request :email)]
-    (println request)
     (if (or (nil? prior)                  ;; No such prior user
             (nil? (prior :password))      ;; Prior user didn't have a password
             (= passd (prior :password)))  ;; Prior's password matches
@@ -39,7 +38,9 @@
               (set? user) user ;; Hack to allow the old way to keep working
               (not (nil? user)) (user :follow)
               :else [])
-     :email (user :email)}))
+     :email (cond (set? user) nil
+                  (nil? user) nil
+                  :else (user :email))}))
 
 (defn update [request]
   "Update the follower list of a user"

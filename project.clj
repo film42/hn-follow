@@ -9,6 +9,7 @@
                  [digest "1.4.4"]
                  [hiccup "1.0.5"]
                  [silasdavis/at-at "1.2.0"] ; Forked
+                 [im.chit/cronj "1.4.3"]
                  [ring/ring-defaults "0.1.2"]
                  [com.draines/postal "1.11.3"]]
   :plugins [[lein-ring "0.8.13"]]
