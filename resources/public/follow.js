@@ -53,17 +53,24 @@ function get_time_from_now(seconds) {
 function heading_template(user_model) {
   var template = "<p class='home-link'><a href='/'>Home</a></p>";
   template += "<p class='edit-link'><a href='/?user="+user_model.username+"&edit=true'>Edit</a></p>";
-  template += "<p><b>"+user_model.username+"</b> is following: ";
+  template += "<p><b>"+user_model.username+"</b>'s follower list ";
+
+  return template + "</center></p>";
+}
+
+function followers_tempalte(user_model) {
+  var template = "<p class='comhead'>Following: ";
 
   for(var i = 0; i < user_model.follow.length; ++i) {
-    template += user_model.follow[i];
+    var user = user_model.follow[i];
+    template += "<a href='https://news.ycombinator.com/user?id="+user+"'>"+user+"</a>";
 
     if(i < (user_model.follow.length - 1)) {
       template += ", ";
     }
   }
 
-  return template + "</center></p>";
+ return template + "</p>";
 }
 
 function item_template(interaction) {
@@ -208,6 +215,7 @@ function render_page(user_model, page_number) {
     });
 
     $('.heading').html(heading_template(user_model) );
+    $('.comments').prepend(followers_tempalte(user_model) );
     $('.comment-list').html('');
     $('.comment-list').attr('start', (page_number - 1) * (usernames.length * 5) + 1);
 
