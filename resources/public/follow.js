@@ -209,6 +209,7 @@ function render_page(user_model, page_number) {
 
     $('.heading').html(heading_template(user_model) );
     $('.comment-list').html('');
+    $('.comment-list').attr('start', (page_number - 1) * (usernames.length * 5) + 1);
 
     // Each interaction pair
     sorted_interactions.forEach(function(interaction) {
