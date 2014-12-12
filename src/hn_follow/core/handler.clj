@@ -3,9 +3,11 @@
             [compojure.route :as route]
             [cheshire.core :refer :all]
             [overtone.at-at :as aa] ; Forked
+            [cronj.core :as c]
             [hn-follow.core.api :as api]
             [hn-follow.core.account :as account]
             [hn-follow.core.views :as views]
+            [hn-follow.core.mailer :as mailer]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]))
 
 (def hn-defaults
@@ -31,8 +33,17 @@
 ;; Process HN Updates (async)
 ;;
 (def hn-tp (aa/mk-pool))
+;; Upate poller
 (aa/interspaced 15000 api/sync-updates hn-tp :desc "Check for API Updates")
 (aa/show-schedule hn-tp)
+;; Digest every week
+(def digest-emails (c/cronj :entries [{:id "Digest Emails"
+                                       :handler (fn [dt opts]
+                                                  (println "Running email digest daemon!")
+                                                  (mailer/send-registered-users-update-email))
+                                       ;; Saturday at 9am
+                                       :schedule "* * 9 6 * * *"}]))
+(println (c/start! digest-emails))
 
 ;;
 ;; Application Routes

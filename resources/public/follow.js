@@ -1,36 +1,4 @@
-function heading_template(user_model) {
-  var template = "<p class='home-link'><a href='/'>Home</a></p>";
-  template += "<p class='edit-link'><a href='/?user="+user_model.username+"&edit=true'>Edit</a></p>";
-  template += "<p><b>"+user_model.username+"</b> is following: ";
-
-  for(var i = 0; i < user_model.follow.length; ++i) {
-    template += user_model.follow[i];
-
-    if(i < (user_model.follow.length - 1)) {
-      template += ", ";
-    }
-  }
-
-  return template + "</center></p>";
-}
-
-function item_template(interaction) {
-  var template = '<li><div class="item-body"><p class="comhead">';
-  template += '<a href="https://news.ycombinator.com/user?id='+interaction.by+'">'+interaction.by+'</a>';
-  template += ' ' + get_Time_From_Now(interaction.time) + ' ';
-  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Link</a> ';
-  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Root</a> ';
-
-  template += "| <u><a href='" + interaction.url + "'>" + interaction.title + "</a></u>";
-
-  if(interaction.text !== undefined) {
-    template += '<div class="item">'+interaction.text+'</p>';
-  }
-
-  return template + '</div></li>';
-}
-
-function get_Time_From_Now(seconds) {
+function get_time_from_now(seconds) {
   var from_now;
   var current_time = new Date() / 1000;
   var seconds_since = current_time - seconds;
@@ -82,6 +50,38 @@ function get_Time_From_Now(seconds) {
   return from_now;
 }
 
+function heading_template(user_model) {
+  var template = "<p class='home-link'><a href='/'>Home</a></p>";
+  template += "<p class='edit-link'><a href='/?user="+user_model.username+"&edit=true'>Edit</a></p>";
+  template += "<p><b>"+user_model.username+"</b> is following: ";
+
+  for(var i = 0; i < user_model.follow.length; ++i) {
+    template += user_model.follow[i];
+
+    if(i < (user_model.follow.length - 1)) {
+      template += ", ";
+    }
+  }
+
+  return template + "</center></p>";
+}
+
+function item_template(interaction) {
+  var template = '<li><div class="item-body"><p class="comhead">';
+  template += '<a href="https://news.ycombinator.com/user?id='+interaction.by+'">'+interaction.by+'</a>';
+  template += ' ' + get_time_from_now(interaction.time) + ' ';
+  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Link</a> ';
+  template += '| <a href="https://news.ycombinator.com/item?id='+ interaction.id +'">Root</a> ';
+
+  template += "| <u><a href='" + interaction.url + "'>" + interaction.title + "</a></u>";
+
+  if(interaction.text !== undefined) {
+    template += '<div class="item">'+interaction.text+'</p>';
+  }
+
+  return template + '</div></li>';
+}
+
 function pagination_template(user, page) {
   var template = '<div class="pagination">';
   if(page > 1) {
@@ -108,9 +108,14 @@ function get_param(variable) {
   return undefined;
 }
 
-function register_form(username, followers) {
+function register_form(username, followers, email) {
   $('.form').show();
   $('.form .register input[name~=user]').val(username);
+
+  if(email !== null){
+    $('.form .register input[name~=weekly_email]').prop('checked',true);
+    $('.form .register input[name~=email]').val(email);
+  }
 
   // Load followers
   if(followers !== undefined) {
@@ -125,6 +130,10 @@ function register_form(username, followers) {
     var username = $('.form .register input[name~=user]').val();
     var password = $('.form .register input[name~=password]').val();
     var follow = [];
+    var email = null;
+    if($('.form .register input[name~=weekly_email]').prop('checked')){
+      email = $('.form .register input[name~=email]').val();
+    }
 
     // Collect Users from form
     for(var i=1; i <= 10; ++i) {
@@ -136,7 +145,8 @@ function register_form(username, followers) {
 
     var request = { username: username,
                     password: password,
-                    follow: follow };
+                    follow: follow,
+                    email: email};
 
     if($("input[name~=new_password_check_box]").prop('checked')) {
       request.new_password = $("input[name~=new_password]").val();
@@ -238,8 +248,9 @@ $(document).ready(function() {
 
     if(get_param("edit") == "true") {
       edit_view(username);
-      register_form(username, model.follow);
+      register_form(username, model.follow, model.email);
       $('.new-password-section').show();
+      $('p.subheader').hide();
       return;
     }
 

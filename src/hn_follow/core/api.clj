@@ -66,8 +66,25 @@
      (let [tree (interaction-tree user skip n)
            clean (map #(% :tree) tree)
            ;; Remove any deleted comments now
-           valid (map #(filter (fn [x] (nil? (x "deleted"))) %) clean)]
-       (map tree-template valid))))
+           valid (map #(filter (fn [x] (nil? (x "deleted"))) %) clean)
+           non-empty (filter #(not (empty? %)) valid)] ;;this is a bad way to check for deleted stories
+       (map tree-template non-empty))))
+
+(defn time-seconds []
+  (quot (System/currentTimeMillis) 1000))
+
+(defn filter-one-week [feed]
+  (let[cur-time (time-seconds)
+      one-week (* 60 60 24 7)]
+    (filter (fn [x] (> (x :time) (- cur-time one-week))) feed)))
+
+(defn week-feed [user]
+  (loop [feed-list []
+         skip 0]
+    (let [feed (filter-one-week (interaction-feed user skip 10))]
+      (if (empty? feed)
+        feed-list
+       (recur (conj feed-list feed) (+ skip 10))))))
 
 ;
 ; Realtime API
