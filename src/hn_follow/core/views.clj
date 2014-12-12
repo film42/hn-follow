@@ -35,7 +35,14 @@
      " list."]
 
     [:p [:span.label "Username: "] [:input {:type "text" :name "user"}]]
-    [:input {:type "submit" :value "Go"}]]))
+    [:input {:type "submit" :value "Go"}]
+
+    [:br][:br]
+    [:div.divider]
+    [:p.comhead
+     [:a {:href "https://github.com/film42/hn-follow"}  "Source on Github"]
+     " | "
+     [:a {:href "https://github.com/film42/hn-follow/wiki/Final-Report"}  "Report"]]]))
 
 (defn register-form []
   (html
