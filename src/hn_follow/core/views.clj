@@ -125,7 +125,7 @@
                  ;; Heading
                  [:p {:style "color: #828282; font-size: 8pt;"}
                   [:a {:style "color: #828282; font-size: 8pt;"
-                       :href (str "https://news.ycombinator.com/user?id=" (user "id"))} (user "id")]
+                       :href (str "https://news.ycombinator.com/user?id=" (:by item))} (:by item)]
                   " | "
                   [:a {:style "color: #828282; font-size: 8pt;"
                        :href (str "https://news.ycombinator.com/item?id=" (:id item))} "Link"]
