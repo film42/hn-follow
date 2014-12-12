@@ -33,7 +33,7 @@ function get_time_from_now(seconds) {
     }
   } else if(seconds_since < 31560000) {
     var months = Math.floor(seconds_since / 2678000);
-    if(monts === 1) {
+    if(months === 1) {
       from_now = months + " month ago";
     } else {
       from_now = months + " months ago";
