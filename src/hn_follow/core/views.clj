@@ -34,7 +34,7 @@
      [:a {:href "/?user=hn-top-10"} "HN Top 10"]
      " list."]
 
-    [:p "Username: " [:input {:type "text" :name "user"}]]
+    [:p [:span.label "Username: "] [:input {:type "text" :name "user"}]]
     [:input {:type "submit" :value "Go"}]]))
 
 (defn register-form []
@@ -47,20 +47,20 @@
    ;; Fields Section
    [:form.register
     [:p.user-section
-     "Username: "
+     [:span.label "Username:"]
      [:input {:type "text" :name "user"}]]
     [:p.password-section
-     "Password:&ensp;"
+     [:span.label "Password:"]
      [:input {:placeholder "Optional" :type "password" :name "password"}]]
     [:p.new-password-section
-     "New Password: "
+     [:span.label "New Password:"]
      [:input {:type "password" :name "new_password"}]]
     [:p.new-password-section
-     "Change Password "
+     "Change Password"
      [:input {:type "checkbox" :name "new_password_check_box"}]]
     [:p.email-section
-     "Email:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-     [:input {:type "text" :name "email"}]]
+     [:span.label "Email:"]
+     [:input {:placeholder "Optional" :type "text" :name "email"}]]
     [:p.email-check-section
      "Sign up for weekly email "
      [:input {:type "checkbox" :name "weekly_email" }]]
